@@ -4,10 +4,8 @@ import {
   createMilestoneDiscount,
   NotImplementedError,
 } from "@/lib/shopify/create-discount";
-import {
-  buildMilestoneCouponFlexMessage,
-  sendLineMessage,
-} from "@/lib/line/send-message";
+import { buildMilestoneMessage } from "@/lib/line/flex-messages";
+import { sendLineMessage } from "@/lib/line/send-message";
 
 /** クーポン有効期限（発行から60日、SPEC 7.2） */
 const COUPON_VALID_DAYS = 60;
@@ -164,12 +162,12 @@ export async function issueReward(
   // --- 4. LINE 通知（現在は送信スタブ） ---
   let lineNotified = false;
   if (lineUserId) {
-    const message = buildMilestoneCouponFlexMessage({
+    const message = buildMilestoneMessage(
       milestone,
       couponCode,
-      couponUrl: buildCouponUrl(couponCode),
+      buildCouponUrl(couponCode),
       expiresAt,
-    });
+    );
     const sendResult = await sendLineMessage(lineUserId, [message]);
     if (sendResult.delivered) {
       const { error: notifyError } = await supabase

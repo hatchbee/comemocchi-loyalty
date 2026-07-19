@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FakeSupabase } from "./helpers/fake-supabase";
 import { generateCouponCode, issueReward } from "@/lib/logic/issue-reward";
-import { buildMilestoneCouponFlexMessage } from "@/lib/line/send-message";
 
 let fake: FakeSupabase;
 
@@ -81,31 +80,4 @@ describe("issueReward（Shopify Admin API スタブ状態）", () => {
   });
 });
 
-describe("buildMilestoneCouponFlexMessage", () => {
-  const params = {
-    milestone: 100,
-    couponCode: "KOMEMOCCHI-M100-111-a3f9k2p1",
-    couponUrl:
-      "https://example.myshopify.com/discount/KOMEMOCCHI-M100-111-a3f9k2p1?redirect=/collections/all",
-    expiresAt: new Date("2026-09-17T00:00:00+09:00"),
-  };
-
-  it("SPEC 7.3 の文面要素を含む Flex Message を構築する", () => {
-    const message = buildMilestoneCouponFlexMessage(params);
-
-    expect(message.type).toBe("flex");
-    expect(message.altText).toContain("100個達成おめでとうございます");
-
-    const json = JSON.stringify(message.contents);
-    expect(json).toContain("100個達成おめでとうございます");
-    expect(json).toContain("パン5個プレゼントクーポン");
-    expect(json).toContain("KOMEMOCCHI-M100-111-a3f9k2p1");
-    expect(json).toContain("クーポンを使う");
-    expect(json).toContain(params.couponUrl);
-  });
-
-  it("有効期限が日本時間の YYYY-MM-DD で表示される", () => {
-    const message = buildMilestoneCouponFlexMessage(params);
-    expect(JSON.stringify(message.contents)).toContain("有効期限：2026-09-17");
-  });
-});
+// Flex Message 構築のテストは tests/flex-messages.test.ts に移動
