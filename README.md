@@ -62,6 +62,22 @@ npm run test:coverage # カバレッジ付き実行
 
 テストは Supabase をインメモリのフェイクに差し替えて実行するため、実際のDBや環境変数は不要です。SPEC.md 4.5 のテストケース（HMAC検証・個数計算・冪等性・マイルストーン発火）をカバーしています。
 
+## LIFFスタンプカードのローカル確認（Phase 3）
+
+LIFF ID が未発行でも、開発モードでは LINE User ID をクエリパラメータでシミュレートできます。
+
+```bash
+# 1. ダミー顧客を投入（.env.local に Supabase の設定が必要）
+npm run seed:test-customer
+# カスタマイズ例: npm run seed:test-customer -- --total=273 --line-user-id=U-test-dev-002
+
+# 2. 開発サーバーを起動してブラウザで開く
+npm run dev
+# http://localhost:3000/liff/stamp-card?dev_line_user_id=U-test-dev-001
+```
+
+本番（LIFF 内）では `.env.local` の `LINE_LIFF_ID` を使って LIFF SDK が LINE User ID を取得します。
+
 ## Shopify Webhookのローカル検証
 
 ### 方法A: curl で直接叩く
@@ -104,14 +120,22 @@ ngrok http 3000
 
 Webhook作成画面に表示される **signing secret** を `.env.local` の `SHOPIFY_WEBHOOK_SECRET` に設定して開発サーバーを再起動後、Shopifyでテスト注文（またはWebhookの「テスト通知を送信」）を行うと、ローカルでWebhookを受信できます。
 
-## プロジェクト構成（Phase 1）
+## プロジェクト構成
 
 ```
-app/api/shopify/webhook/route.ts  # Webhook受信エンドポイント
-lib/shopify/verify.ts             # HMAC-SHA256署名検証
-lib/supabase/server.ts            # Supabaseサーバーサイドクライアント
-lib/logic/count-bread.ts          # パン個数集計ロジック
-lib/logic/update-customer.ts      # 冪等性チェック・customers更新・マイルストーン判定
-types/shopify.ts                  # Shopify Webhookペイロードのzodスキーマ
-tests/                            # Vitestユニットテスト
+app/api/shopify/webhook/route.ts   # [Phase 1] Webhook受信エンドポイント
+app/api/customer/status/route.ts   # [Phase 3] 顧客状態取得API
+app/liff/stamp-card/page.tsx       # [Phase 3] LIFFスタンプカードページ
+app/liff/layout.tsx                # [Phase 3] フォント・ベース色（SPEC 6.3）
+components/                        # [Phase 3] StampCard / ProgressBar / BreadStamp
+lib/shopify/verify.ts              # [Phase 1] HMAC-SHA256署名検証
+lib/supabase/server.ts             # Supabaseサーバーサイドクライアント
+lib/logic/count-bread.ts           # [Phase 1] パン個数集計ロジック
+lib/logic/update-customer.ts       # [Phase 1] 冪等性チェック・customers更新・マイルストーン判定
+lib/logic/stamp-progress.ts        # [Phase 3] スタンプカード進捗計算
+types/shopify.ts                   # Shopify Webhookペイロードのzodスキーマ
+scripts/seed-test-customer.ts      # テスト用ダミー顧客投入スクリプト
+tests/                             # Vitestユニットテスト
 ```
+
+残作業は [NEXT_STEPS.md](./NEXT_STEPS.md) を参照してください。

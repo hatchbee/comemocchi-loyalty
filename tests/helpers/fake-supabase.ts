@@ -135,11 +135,19 @@ export class FakeSupabase {
   private customersTable() {
     return {
       select: () => ({
-        eq: (_column: string, value: number) => ({
-          maybeSingle: async (): Promise<QueryResult<CustomerRow | null>> => ({
-            data: this.customers.get(value) ?? null,
-            error: null,
-          }),
+        eq: (column: string, value: number | string) => ({
+          maybeSingle: async (): Promise<QueryResult<CustomerRow | null>> => {
+            let row: CustomerRow | null;
+            if (column === "line_user_id") {
+              row =
+                [...this.customers.values()].find(
+                  (customer) => customer.line_user_id === value,
+                ) ?? null;
+            } else {
+              row = this.customers.get(value as number) ?? null;
+            }
+            return { data: row, error: null };
+          },
         }),
       }),
       upsert: async (

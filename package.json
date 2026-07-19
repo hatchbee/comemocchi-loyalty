@@ -9,9 +9,11 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "seed:test-customer": "tsx scripts/seed-test-customer.ts"
   },
   "dependencies": {
+    "@line/liff": "^2.29.1",
     "@supabase/supabase-js": "^2.110.7",
     "next": "^15.5.20",
     "react": "19.2.4",
@@ -27,6 +29,7 @@
     "eslint": "^9",
     "eslint-config-next": "^15.5.20",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }
