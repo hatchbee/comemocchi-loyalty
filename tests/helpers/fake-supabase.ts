@@ -17,6 +17,19 @@ export interface SkuBreadMapRow {
   updated_at: string;
 }
 
+/** rewards_issued テーブルの行 */
+export interface RewardIssuedRow {
+  id: number;
+  shopify_customer_id: number;
+  milestone: number;
+  coupon_code: string;
+  price_rule_id: number | null;
+  discount_code_id: number | null;
+  line_notified_at: string | null;
+  used_at: string | null;
+  issued_at: string;
+}
+
 interface QueryResult<T> {
   data: T;
   error: { code?: string; message: string } | null;
@@ -35,7 +48,10 @@ export class FakeSupabase {
   customers = new Map<number, CustomerRow>();
   ordersProcessed = new Map<number, OrderProcessedRow>();
   skuBreadMap = new Map<string, SkuBreadMapRow>();
+  /** key: `${shopify_customer_id}:${milestone}`（UNIQUE 制約の再現） */
+  rewardsIssued = new Map<string, RewardIssuedRow>();
   private nextCustomerRowId = 1;
+  private nextRewardRowId = 1;
 
   seedSku(sku: string, breadCount: number, productName?: string): void {
     this.skuBreadMap.set(sku, {
@@ -76,6 +92,8 @@ export class FakeSupabase {
         return this.skuBreadMapTable();
       case "customers":
         return this.customersTable();
+      case "rewards_issued":
+        return this.rewardsIssuedTable();
       default:
         throw new Error(`FakeSupabase: 未対応のテーブル: ${table}`);
     }
@@ -128,6 +146,55 @@ export class FakeSupabase {
             }),
           error: null,
         }),
+      }),
+    };
+  }
+
+  private rewardsIssuedTable() {
+    type MatchQuery = { shopify_customer_id: number; milestone: number };
+    const keyOf = (query: MatchQuery): string =>
+      `${query.shopify_customer_id}:${query.milestone}`;
+
+    return {
+      insert: async (
+        row: Pick<
+          RewardIssuedRow,
+          "shopify_customer_id" | "milestone" | "coupon_code"
+        >,
+      ): Promise<QueryResult<null>> => {
+        const key = keyOf(row);
+        // UNIQUE(shopify_customer_id, milestone) を再現
+        if (this.rewardsIssued.has(key)) {
+          return {
+            data: null,
+            error: { code: "23505", message: "duplicate key value violates unique constraint" },
+          };
+        }
+        this.rewardsIssued.set(key, {
+          id: this.nextRewardRowId++,
+          price_rule_id: null,
+          discount_code_id: null,
+          line_notified_at: null,
+          used_at: null,
+          issued_at: now(),
+          ...row,
+        });
+        return { data: null, error: null };
+      },
+      update: (patch: Partial<RewardIssuedRow>) => ({
+        match: async (query: MatchQuery): Promise<QueryResult<null>> => {
+          const existing = this.rewardsIssued.get(keyOf(query));
+          if (existing) {
+            this.rewardsIssued.set(keyOf(query), { ...existing, ...patch });
+          }
+          return { data: null, error: null };
+        },
+      }),
+      delete: () => ({
+        match: async (query: MatchQuery): Promise<QueryResult<null>> => {
+          this.rewardsIssued.delete(keyOf(query));
+          return { data: null, error: null };
+        },
       }),
     };
   }

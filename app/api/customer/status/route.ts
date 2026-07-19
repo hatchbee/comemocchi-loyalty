@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import {
+  DEV_FALLBACK_CUSTOMER,
+  DEV_PRESET_CUSTOMERS,
+} from "@/lib/dev/dev-presets";
 
 export const runtime = "nodejs";
 
@@ -33,6 +37,24 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ error: "line_user_id is required" }, { status: 400 });
   }
 
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  // 開発モード: プリセット名（fresh / progress / near / achieved / repeater）なら
+  // Supabase を参照せずダミーデータを返す（UI 確認用）
+  if (isDevelopment) {
+    const preset = DEV_PRESET_CUSTOMERS[parsed.data.line_user_id];
+    if (preset) {
+      console.log(
+        `[customer/status] 開発用プリセット "${parsed.data.line_user_id}" を返します: ${preset.description}`,
+      );
+      return Response.json({
+        totalBreadCount: preset.totalBreadCount,
+        lastMilestoneReached: preset.lastMilestoneReached,
+        devPreset: true,
+      });
+    }
+  }
+
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
@@ -54,6 +76,19 @@ export async function GET(request: Request): Promise<Response> {
       lastMilestoneReached: row.last_milestone_reached,
     });
   } catch (error) {
+    // 開発モード: Supabase 未設定・接続失敗時はダミーデータでフォールバックし、
+    // 環境構築なしでも UI を確認できるようにする
+    if (isDevelopment) {
+      console.warn(
+        "[customer/status] Supabase 未設定または接続失敗のため、開発用ダミーデータでフォールバックします",
+        error,
+      );
+      return Response.json({
+        totalBreadCount: DEV_FALLBACK_CUSTOMER.totalBreadCount,
+        lastMilestoneReached: DEV_FALLBACK_CUSTOMER.lastMilestoneReached,
+        devFallback: true,
+      });
+    }
     console.error("[customer/status] 顧客状態の取得に失敗しました", error);
     return Response.json({ error: "internal server error" }, { status: 500 });
   }

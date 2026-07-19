@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ShopifyOrder } from "@/types/shopify";
 import { countBread } from "@/lib/logic/count-bread";
+import { issueReward } from "@/lib/logic/issue-reward";
 
 /** マイルストーンの単位（100個ごと） */
 const MILESTONE_UNIT = 100;
@@ -184,11 +185,30 @@ export async function processPaidOrder(
         `🎉 Milestones reached: [${milestonesReached.join(", ")}] for customer ${shopifyCustomerId}`,
       );
       for (const milestone of milestonesReached) {
-        // Phase 4 でマイルストーンごとにクーポン発行 + LINE 通知を実装する。Phase 1 ではログ出力のみ。
         console.log(
           `🎉 [milestone] customer=${shopifyCustomerId} がマイルストーン ${milestone} 個に到達しました` +
-            `（累計 ${totalBreadCount} 個）。クーポン発行は Phase 4 で実装予定です。`,
+            `（累計 ${totalBreadCount} 個）`,
         );
+        // 特典発行（Phase 4）。Shopify Admin API・LINE 送信が未実装の間は
+        // issueReward 内でスキップされる。発行失敗で注文処理は失敗させない
+        // （注文自体は処理済みのため、500 でリトライさせても already_processed になるだけ）
+        try {
+          const rewardResult = await issueReward({
+            supabase,
+            shopifyCustomerId,
+            lineUserId: existing?.line_user_id ?? null,
+            milestone,
+            totalBreadCount,
+          });
+          console.log(
+            `[reward] customer=${shopifyCustomerId} milestone=${milestone}: ${rewardResult.status}`,
+          );
+        } catch (error) {
+          console.error(
+            `[reward] customer=${shopifyCustomerId} milestone=${milestone} の特典発行で予期しないエラー`,
+            error,
+          );
+        }
       }
     }
 

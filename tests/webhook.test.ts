@@ -299,6 +299,28 @@ describe("POST /api/shopify/webhook（複数マイルストーン跨ぎ）", () 
     );
   });
 
+  it("マイルストーン発火時の特典発行は Admin API 未実装のためスキップされ、rewards_issued に残骸が残らない", async () => {
+    currentFake.seedCustomer({
+      shopify_customer_id: 775,
+      total_bread_count: 97,
+      last_milestone_reached: 0,
+    });
+
+    const response = await POST(
+      makeRequest(orderPayload(5105, 775, [{ sku: "KOMEMOCCHI-10", quantity: 1 }])),
+    );
+    expect(response.status).toBe(200);
+
+    // 予約 INSERT → スタブで NotImplemented → 補償削除、で最終的に空
+    expect(currentFake.rewardsIssued.size).toBe(0);
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining("Shopify Admin API 未実装"),
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("skipped_not_implemented"),
+    );
+  });
+
   it("105個の顧客が10個購入 → 発火なし（同じ100の区分内）", async () => {
     currentFake.seedCustomer({
       shopify_customer_id: 774,

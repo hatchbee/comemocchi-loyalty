@@ -66,6 +66,22 @@ npm run test:coverage # カバレッジ付き実行
 
 LIFF ID が未発行でも、開発モードでは LINE User ID をクエリパラメータでシミュレートできます。
 
+### Supabase設定なしで見た目を確認する（プリセット）
+
+`npm run dev` を起動して以下のURLを開くだけで、各状態のUIを確認できます（Supabase 不要）。
+
+| URL | 状態 |
+|-----|------|
+| http://localhost:3000/liff/stamp-card?dev_line_user_id=fresh | 開始時（累計0個） |
+| http://localhost:3000/liff/stamp-card?dev_line_user_id=progress | 中盤（累計47個） |
+| http://localhost:3000/liff/stamp-card?dev_line_user_id=near | あと少し（累計95個） |
+| http://localhost:3000/liff/stamp-card?dev_line_user_id=achieved | 達成直後（累計100個・達成1回） |
+| http://localhost:3000/liff/stamp-card?dev_line_user_id=repeater | 3回目挑戦中（累計273個・達成2回） |
+
+プリセット名以外の ID を指定した場合は Supabase を参照し、未設定・接続失敗なら開発モードに限りダミーデータ（累計73個）にフォールバックします。
+
+### Supabaseの実データで確認する
+
 ```bash
 # 1. ダミー顧客を投入（.env.local に Supabase の設定が必要）
 npm run seed:test-customer
