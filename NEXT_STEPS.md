@@ -1,6 +1,39 @@
 # NEXT_STEPS — 実装状態と残作業
 
-最終更新: 2026-07-19（Phase 1・Phase 3 完了、Phase 2 スキップ決定、Phase 3.5 = 開発フォールバック + Phase 4 足場、Phase 4a = Flex Message プロトタイプ、Phase 5a = リッチメニュー素材まで完了）
+最終更新: 2026-07-19（セッション1終了時点）
+
+## セッション1サマリ（2026-07-19 実装分）
+
+| コミット | 内容 |
+|---------|------|
+| `19effd3` | **Phase 1**: Next.js 15 プロジェクト初期化、Shopify orders/paid webhook（HMAC検証・冪等性・パン個数集計・customers UPSERT）、全マイルストーン発火対応、Vitest テスト一式 |
+| `3dfb663` | **Phase 3**: LIFF スタンプカード UI（10×10グリッド・進捗バー・ブランドデザイン）、顧客状態 API、シードスクリプト。Phase 2 は CRM PLUS on LINE 代替のためスキップ決定 |
+| `5ef408e` | **Phase 3.5**: 開発用プリセット/フォールバック（Supabase なしで UI 確認可）、Phase 4 足場（issue-reward オーケストレーション・rewards_issued 記録・Shopify/LINE スタブ） |
+| `4261fa8` | ALLOW_DEV_MODE_IN_PRODUCTION フラグ（本番デプロイでのデザイン確認用・デフォルト無効） |
+| `6745c40` | **Phase 4a**: LINE Flex Message 5種プロトタイプ + ブラウザプレビューページ（/dev/message-preview） |
+| `39d1118` | **Phase 5a**: リッチメニュー素材（SVG原本・PNG・生成スクリプト・設定手順書） |
+
+テスト: 58件全パス / 型チェック・Lint クリーン / 本番ビルド確認済み
+
+## 明日以降の作業リスト（優先順）
+
+1. **Phase 4 本実装**（Shopify Admin API トークン取得が前提 — Dev Dashboard の仕様変更問題の解消待ち）
+   - `lib/shopify/create-discount.ts` の NotImplementedError スタブを priceRuleCreate + discountCodeCreate に差し替え（SPEC 7.2、指数バックオフ3回）
+   - `lib/line/send-message.ts` の実送信（LINE Messaging API push、LINE_CHANNEL_ACCESS_TOKEN 使用）
+   - LINE 未通知分（line_notified_at IS NULL）の cron 再送（SPEC 7.4）
+   - リマインドメッセージ（あと5個/10個）の配信トリガー設計・実装（webhook 時判定 or 定期バッチ）
+2. **手動セットアップ**（コード外、オーナー作業）
+   - Supabase テーブル作成 + sku_bread_map 投入 + RLS 有効化
+   - Shopify Settings > Notifications で orders/paid webhook 作成・signing secret 取得
+   - Vercel デプロイ + 環境変数投入
+   - プレゼント用 SKU `KOMEMOCCHI-GIFT-5` 作成（SPEC 9.6）
+   - LINE Developers で LIFF 登録 → LIFF ID 取得
+   - リッチメニュー公開（docs/rich-menu-setup.md、実URL確定が前提）
+3. **Phase 2 代替**: CRM PLUS on LINE の連携方法調査 → customers.line_user_id への取り込み実装
+4. **本番公開前の必須対応**
+   - status API の LIFF ID トークン検証（現状 line_user_id 無検証）
+   - ALLOW_DEV_MODE_IN_PRODUCTION を false に戻す（デザイン確認で有効化した場合）
+5. **Phase 5 仕上げ**: E2E テスト（テスト注文 → webhook → LIFF 表示 → クーポン適用）
 
 ## 現在の実装状態（Phase 1: 完了）
 
