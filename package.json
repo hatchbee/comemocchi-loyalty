@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "seed:test-customer": "tsx scripts/seed-test-customer.ts"
+    "seed:test-customer": "tsx scripts/seed-test-customer.ts",
+    "generate:rich-menu": "tsx scripts/generate-rich-menu.ts"
   },
   "dependencies": {
     "@line/liff": "^2.29.1",
@@ -21,6 +22,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

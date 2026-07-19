@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2500" height="1686" viewBox="0 0 2500 1686">
+  <!--
+    こめもっち LINE公式アカウント リッチメニュー（2500×1686 / 2行×3列）
+    カラー: ベース #FDF6E9 / 区切り線 #C08856 / テキスト #3A2E1F
+            アイコン #C08856・#8B6F47 / アクセント #E8A845 / 円背景 #F5E6D3
+    PNG化: npm run generate:rich-menu（scripts/generate-rich-menu.ts）
+  -->
+  <defs>
+    <style>
+      .label {
+        font-family: "Zen Maru Gothic", "Yu Gothic UI", "Yu Gothic", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+        font-weight: 700;
+        font-size: 84px;
+        fill: #3A2E1F;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <!-- 背景 -->
+  <rect x="0" y="0" width="2500" height="1686" fill="#FDF6E9"/>
+
+  <!-- 区切り線（焼き色ブラウンの細線、端に余白を残してやわらかく） -->
+  <g stroke="#C08856" stroke-width="4" stroke-linecap="round" opacity="0.55">
+    <line x1="833.5"  y1="70" x2="833.5"  y2="1616"/>
+    <line x1="1666.5" y1="70" x2="1666.5" y2="1616"/>
+    <line x1="70" y1="843" x2="2430" y2="843"/>
+  </g>
+
+  <!-- ==================== 上段 ==================== -->
+
+  <!-- 1. スタンプカード（パン） -->
+  <g transform="translate(416.67, 421.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210) scale(1)">
+      <path d="M30 128 C30 76 62 44 100 44 s70 32 70 84 a30 30 0 0 1 -30 30 H60 a30 30 0 0 1 -30 -30 Z" fill="#C08856"/>
+      <path d="M64 106 l16 -22 M92 100 l16 -22 M120 106 l16 -22" stroke="#8B6F47" stroke-width="9" stroke-linecap="round" fill="none"/>
+    </g>
+    <text class="label" x="0" y="260">スタンプカード</text>
+  </g>
+
+  <!-- 2. こめもっちストア（カート） -->
+  <g transform="translate(1250, 421.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210)">
+      <path d="M70 84 a30 40 0 0 1 60 0" stroke="#8B6F47" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M42 84 h116 l-13 66 a24 24 0 0 1 -23.5 19 H78.5 a24 24 0 0 1 -23.5 -19 Z" fill="#C08856"/>
+      <circle cx="82" cy="122" r="8" fill="#FDF6E9"/>
+      <circle cx="118" cy="122" r="8" fill="#FDF6E9"/>
+    </g>
+    <text class="label" x="0" y="260">こめもっちストア</text>
+  </g>
+
+  <!-- 3. 新商品情報（キラキラ） -->
+  <g transform="translate(2083.33, 421.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210)">
+      <path d="M90 40 L104 76 L140 90 L104 104 L90 140 L76 104 L40 90 L76 76 Z" fill="#E8A845"/>
+      <path d="M143 108 L151 128 L171 136 L151 144 L143 164 L135 144 L115 136 L135 128 Z" fill="#C08856"/>
+    </g>
+    <text class="label" x="0" y="260">新商品情報</text>
+  </g>
+
+  <!-- ==================== 下段 ==================== -->
+
+  <!-- 4. お問い合わせ（吹き出し） -->
+  <g transform="translate(416.67, 1264.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210)">
+      <path d="M35 60 a26 26 0 0 1 26 -26 h78 a26 26 0 0 1 26 26 v50 a26 26 0 0 1 -26 26 H98 l-34 30 v-30 h-3 a26 26 0 0 1 -26 -26 Z" fill="#C08856"/>
+      <circle cx="72" cy="85" r="9" fill="#FDF6E9"/>
+      <circle cx="100" cy="85" r="9" fill="#FDF6E9"/>
+      <circle cx="128" cy="85" r="9" fill="#FDF6E9"/>
+    </g>
+    <text class="label" x="0" y="260">お問い合わせ</text>
+  </g>
+
+  <!-- 5. お客様の声（星） -->
+  <g transform="translate(1250, 1264.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210)">
+      <path d="M100 32 L117.6 79.7 L168.5 81.8 L128.5 113.3 L142.3 162.2 L100 134 L57.7 162.2 L71.5 113.3 L31.5 81.8 L82.4 79.7 Z"
+            fill="#E8A845" stroke="#E8A845" stroke-width="10" stroke-linejoin="round"/>
+    </g>
+    <text class="label" x="0" y="260">お客様の声</text>
+  </g>
+
+  <!-- 6. マイページ（人物） -->
+  <g transform="translate(2083.33, 1264.5)">
+    <circle cx="0" cy="-110" r="170" fill="#F5E6D3"/>
+    <g transform="translate(-100, -210)">
+      <circle cx="100" cy="72" r="33" fill="#C08856"/>
+      <path d="M42 166 a58 46 0 0 1 116 0 Z" fill="#C08856"/>
+    </g>
+    <text class="label" x="0" y="260">マイページ</text>
+  </g>
+</svg>
