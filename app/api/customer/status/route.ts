@@ -37,7 +37,11 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ error: "line_user_id is required" }, { status: 400 });
   }
 
-  const isDevelopment = process.env.NODE_ENV === "development";
+  // ALLOW_DEV_MODE_IN_PRODUCTION=true で本番でもダミーデータを許可する
+  // （デプロイ後のデザイン確認用の一時設定。LINE公開前に必ず false に戻すこと）
+  const isDevelopment =
+    process.env.NODE_ENV === "development" ||
+    process.env.ALLOW_DEV_MODE_IN_PRODUCTION === "true";
 
   // 開発モード: プリセット名（fresh / progress / near / achieved / repeater）なら
   // Supabase を参照せずダミーデータを返す（UI 確認用）

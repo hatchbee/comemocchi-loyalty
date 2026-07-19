@@ -137,4 +137,25 @@ describe("GET /api/customer/status（開発モードのダミーデータ）", (
     const response = await GET(makeRequest("?line_user_id=U-real-user"));
     expect(response.status).toBe(500);
   });
+
+  it("本番モードでも ALLOW_DEV_MODE_IN_PRODUCTION=true ならプリセットが有効", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ALLOW_DEV_MODE_IN_PRODUCTION", "true");
+    supabaseAvailable = false;
+
+    const response = await GET(makeRequest("?line_user_id=repeater"));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      totalBreadCount: 273,
+      lastMilestoneReached: 200,
+      devPreset: true,
+    });
+  });
+
+  it("ALLOW_DEV_MODE_IN_PRODUCTION=false（デフォルト）の本番ではプリセット無効", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ALLOW_DEV_MODE_IN_PRODUCTION", "false");
+    const response = await GET(makeRequest("?line_user_id=repeater"));
+    expect(response.status).toBe(404);
+  });
 });

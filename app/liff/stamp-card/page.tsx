@@ -14,9 +14,14 @@ type ViewState =
  * - 開発モード: URL クエリ `?dev_line_user_id=xxx` でシミュレート可能
  *   （LIFF ID 未発行でもローカルで動作確認できるようにするため）
  * - 本番モード: LIFF SDK で取得
+ *   ただし ALLOW_DEV_MODE_IN_PRODUCTION=true のときは本番でもシミュレート可
+ *   （デプロイ後のデザイン確認用の一時設定。LINE公開前に必ず false に戻すこと）
  */
 async function resolveLineUserId(): Promise<string> {
-  if (process.env.NODE_ENV === "development") {
+  const devSimulationEnabled =
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_ALLOW_DEV_MODE_IN_PRODUCTION === "true";
+  if (devSimulationEnabled) {
     const devUserId = new URLSearchParams(window.location.search).get(
       "dev_line_user_id",
     );
