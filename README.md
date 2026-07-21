@@ -106,6 +106,15 @@ npm run seed:line-user -- --line-user-id=Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --tot
 - 実行するとどの Supabase プロジェクト（ホスト名）に接続するかがログに表示されるので、本番かどうか必ず確認してください。
 - 投入後は、LINE公式アカウントのリッチメニューやトーク内リンクから LIFF を開けば、実機でスタンプカードが表示されます。
 
+#### 実機で自分の LINE User ID を確認する（デバッグ表示）
+
+上記のシード投入には自分の LINE User ID が必要ですが、実機の LIFF 画面からは通常確認できません。そこで、以下のいずれかの条件で画面上部に赤いデバッグバナーが表示され、LINE User ID を確認・コピーできます。
+
+- URL に `?debug=1` を付けてアクセスする（例: `https://liff.line.me/{LIFF_ID}?debug=1`）
+- 環境変数 `ALLOW_DEV_MODE_IN_PRODUCTION=true` が設定されている（本番でも常に表示される）
+
+> ⚠️ **これは実機テスト用の一時機能です（`components/DebugLineUserIdBanner.tsx`）。ユーザーの LINE User ID が誰でも閲覧できる状態になるため、LINE公開前に必ず `app/liff/stamp-card/page.tsx` からデバッグバナーの表示ロジックと `components/DebugLineUserIdBanner.tsx` を削除してください。**
+
 ### Supabaseの実データで確認する（開発環境）
 
 ```bash

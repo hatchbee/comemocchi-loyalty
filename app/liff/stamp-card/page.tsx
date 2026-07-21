@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { StampCard } from "@/components/StampCard";
+import { DebugLineUserIdBanner } from "@/components/DebugLineUserIdBanner";
 
 type ViewState =
   | { phase: "loading" }
@@ -53,12 +54,25 @@ async function resolveLineUserId(): Promise<string> {
 
 export default function StampCardPage() {
   const [state, setState] = useState<ViewState>({ phase: "loading" });
+  // 実機テスト用のデバッグ表示（LINE User ID をシードスクリプトにコピーするため）。
+  // 本番公開前に削除すること（README / NEXT_STEPS.md 参照）
+  const [debugEnabled, setDebugEnabled] = useState(false);
+  const [debugLineUserId, setDebugLineUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const hasDebugParam =
+      new URLSearchParams(window.location.search).get("debug") === "1";
+    const allowDevInProduction =
+      process.env.NEXT_PUBLIC_ALLOW_DEV_MODE_IN_PRODUCTION === "true";
+    setDebugEnabled(hasDebugParam || allowDevInProduction);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const lineUserId = await resolveLineUserId();
+        if (!cancelled) setDebugLineUserId(lineUserId);
         const response = await fetch(
           `/api/customer/status?line_user_id=${encodeURIComponent(lineUserId)}`,
         );
@@ -92,6 +106,10 @@ export default function StampCardPage() {
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-[428px] px-4 py-6">
+      {debugEnabled && debugLineUserId && (
+        <DebugLineUserIdBanner lineUserId={debugLineUserId} />
+      )}
+
       {/* 見出し */}
       <h1 className="text-center font-[family-name:var(--font-zen-maru)] text-xl font-bold text-[#8B6F47]">
         🍞 こめもっち スタンプカード

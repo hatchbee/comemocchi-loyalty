@@ -1,6 +1,11 @@
 # NEXT_STEPS — 実装状態と残作業
 
-最終更新: 2026-07-19（セッション1終了時点）
+最終更新: 2026-07-21
+
+## セッション2（2026-07-21）追加分
+
+- `scripts/seed-line-user.ts` — 本番 Supabase に実際の LINE User ID でダミー顧客を投入するスクリプト（`npm run seed:line-user`）
+- LIFF ページに実機テスト用の LINE User ID デバッグ表示を追加（`?debug=1` または ALLOW_DEV_MODE_IN_PRODUCTION=true で表示。**本番公開前に削除必須**、上記「本番公開前の必須対応」参照）
 
 ## セッション1サマリ（2026-07-19 実装分）
 
@@ -33,6 +38,7 @@
 4. **本番公開前の必須対応**
    - status API の LIFF ID トークン検証（現状 line_user_id 無検証）
    - ALLOW_DEV_MODE_IN_PRODUCTION を false に戻す（デザイン確認で有効化した場合）
+   - **LINE User ID デバッグバナーの削除**（`app/liff/stamp-card/page.tsx` の debugEnabled/debugLineUserId 関連コードと `components/DebugLineUserIdBanner.tsx`）。`?debug=1` または ALLOW_DEV_MODE_IN_PRODUCTION=true で誰でも他人の画面から LINE User ID を閲覧できてしまう実機テスト用の一時機能（2026-07-21 追加）
 5. **Phase 5 仕上げ**: E2E テスト（テスト注文 → webhook → LIFF 表示 → クーポン適用）
 
 ## 現在の実装状態（Phase 1: 完了）
