@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "seed:test-customer": "tsx scripts/seed-test-customer.ts",
+    "seed:line-user": "tsx scripts/seed-line-user.ts",
     "generate:rich-menu": "tsx scripts/generate-rich-menu.ts"
   },
   "dependencies": {
